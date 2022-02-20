@@ -60,47 +60,48 @@ class _newtaskState extends State<newtask> {
                     )),
               ),
             ),
-            datePicker(selectedDate: _selectedDate,onPressedUpdate: (recieved_date){
-              _selectedDate=recieved_date;
-              setState(() {
-              });
-            },
+            datePicker(
+              selectedDate: _selectedDate,
+              onPressedUpdate: (recieved_date) {
+                _selectedDate = recieved_date;
+                setState(() {});
+              },
             ),
             Text("$_selectedDate"),
-            SizedBox(height: 20,),
-
-
+            SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(onPressed: () {}, child: Text("Add Task"))
           ],
         ),
       ),
     );
   }
-
 }
-
 
 class datePicker extends StatefulWidget {
   final Function(DateTime) onPressedUpdate;
   DateTime selectedDate;
-  datePicker({Key? key,required this.selectedDate,required this.onPressedUpdate}) : super(key: key);
+
+  datePicker(
+      {Key? key, required this.selectedDate, required this.onPressedUpdate})
+      : super(key: key);
 
   @override
   _datePickerState createState() => _datePickerState();
 }
 
 class _datePickerState extends State<datePicker> {
-
-
   @override
   Widget build(BuildContext context) {
-    return
-      ElevatedButton(
-        onPressed: () {
-          _selectDate(context);
-        },
-        child: Text("Choose Date"),
-      );
+    return ElevatedButton(
+      onPressed: () {
+        _selectDate(context);
+      },
+      child: Text("Choose Date"),
+    );
   }
+
   _selectDate(BuildContext context) async {
     final DateTime? selected = await showDatePicker(
       context: context,
@@ -111,10 +112,8 @@ class _datePickerState extends State<datePicker> {
     if (selected != null && selected != widget.selectedDate) {
       setState(() {
         widget.selectedDate = selected;
-      }
-      );
+      });
       widget.onPressedUpdate(widget.selectedDate);
-  }
+    }
   }
 }
-
