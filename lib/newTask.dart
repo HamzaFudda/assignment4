@@ -23,7 +23,8 @@ class _newtaskState extends State<newtask> {
         title: Text("New Task"),
       ),
       body: Container(
-        child: Column(
+        child: SingleChildScrollView(
+        child:Column(
           children: <Widget>[
             SizedBox(height: 50),
             title(titleController: titleMainController),
@@ -36,6 +37,7 @@ class _newtaskState extends State<newtask> {
             SizedBox(height: 20),
             ElevatedButton(onPressed: () {}, child: Text("Add Task"))
           ],
+        ),
         ),
       ),
     );
@@ -70,7 +72,7 @@ class _datePickerState extends State<datePicker> {
             style: TextStyle(color: Colors.black),
             decoration: InputDecoration(
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.arrow_circle_right),
+                  icon: Icon(Icons.arrow_forward),
                   onPressed: () async {
                     await _selectDate(context);
                     (selected != null)
@@ -118,7 +120,7 @@ class title extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 10, 24, 30),
+      padding: const EdgeInsets.fromLTRB(24, 10, 24, 10),
       child: TextField(
         controller: titleController,
         style: TextStyle(color: Colors.black),
@@ -144,14 +146,14 @@ class description extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 10, 24, 30),
+      padding: const EdgeInsets.fromLTRB(24, 10, 24, 10),
       child: TextField(
         keyboardType: TextInputType.multiline,
-        maxLines: null,
+        maxLines: 2,
         controller: descriptionController,
         style: TextStyle(color: Colors.black, fontSize: 20),
         decoration: InputDecoration(
-            contentPadding: const EdgeInsets.fromLTRB(12, 20, 12, 70),
+            contentPadding: const EdgeInsets.fromLTRB(12, 50, 12, 10),
             fillColor: Colors.grey.shade100,
             filled: true,
             hintText: "Description",
