@@ -56,11 +56,13 @@ class datePicker extends StatefulWidget {
 
 class _datePickerState extends State<datePicker> {
   TextEditingController _date = TextEditingController();
+  DateTime? selected;
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(DateFormat('dd-MMM-yyyy').format(widget.selectedDate)),
+        //Text(DateFormat('dd-MMM-yyyy').format(widget.selectedDate)),
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 10, 24, 30),
           child: TextField(
@@ -71,7 +73,10 @@ class _datePickerState extends State<datePicker> {
                   icon: Icon(Icons.arrow_circle_right),
                   onPressed: () async {
                     await _selectDate(context);
-                    _date.text = DateFormat('dd-MMM-yyyy').format(widget.selectedDate);
+                    (selected != null)
+                        ? _date.text = DateFormat('dd-MMM-yyyy')
+                            .format(widget.selectedDate)
+                        : _date.clear();
                     setState(() {});
                   },
                 ),
@@ -88,8 +93,8 @@ class _datePickerState extends State<datePicker> {
     );
   }
 
-  Future <void> _selectDate(BuildContext context) async {
-    final DateTime? selected = await showDatePicker(
+  Future<void> _selectDate(BuildContext context) async {
+    selected = await showDatePicker(
       context: context,
       initialDate: widget.selectedDate,
       firstDate: DateTime(2010),
@@ -97,10 +102,11 @@ class _datePickerState extends State<datePicker> {
     );
     if (selected != null && selected != widget.selectedDate) {
       setState(() {
-        widget.selectedDate = selected;
+        widget.selectedDate = selected!;
       });
       widget.onPressedUpdate(widget.selectedDate);
     }
+    print(selected);
   }
 }
 
@@ -157,3 +163,5 @@ class description extends StatelessWidget {
     );
   }
 }
+
+
