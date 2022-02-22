@@ -4,42 +4,51 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
-class newtask extends StatefulWidget {
-  const newtask({Key? key}) : super(key: key);
+class newTask extends StatefulWidget {
+  const newTask({Key? key}) : super(key: key);
 
   @override
-  _newtaskState createState() => _newtaskState();
+  _newTaskState createState() => _newTaskState();
 }
 
-class _newtaskState extends State<newtask> {
+class _newTaskState extends State<newTask> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: SingleChildScrollView(),
+    );
+  }
+}
+
+class taskForm extends StatefulWidget {
+  const taskForm({Key? key}) : super(key: key);
+
+  @override
+  _taskFormState createState() => _taskFormState();
+}
+
+class _taskFormState extends State<taskForm> {
+  final _formKey = GlobalKey<FormState>();
+  bool _submitted = false;
   TextEditingController titleMainController = TextEditingController();
   TextEditingController descriptionMainController = TextEditingController();
-  DateTime _selectedDate = DateTime.now();
+  DateTime selectedDate = DateTime.now();
+
+  void _submit() {
+    setState(() => _submitted = true);
+    if (_formKey.currentState!.validate()) {}
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("New Task"),
-      ),
-      body: Container(
-        child: SingleChildScrollView(
-        child:Column(
-          children: <Widget>[
-            SizedBox(height: 50),
-            title(titleController: titleMainController),
-            description(descriptionController: descriptionMainController),
-            datePicker(
-                selectedDate: _selectedDate,
-                onPressedUpdate: (recieved_date) {
-                  _selectedDate = recieved_date;
-                }),
-            SizedBox(height: 20),
-            ElevatedButton(onPressed: () {}, child: Text("Add Task"))
-          ],
-        ),
-        ),
-      ),
+    return Form(
+      child: Column(children: <Widget>[
+        title(titleController: titleMainController),
+        description(descriptionController: descriptionMainController),
+        datePicker(selectedDate: selectedDate, onPressedUpdate: (recieved_date) {
+          selectedDate = recieved_date;
+        })
+      ]),
     );
   }
 }
@@ -67,7 +76,9 @@ class _datePickerState extends State<datePicker> {
         //Text(DateFormat('dd-MMM-yyyy').format(widget.selectedDate)),
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 10, 24, 30),
-          child: TextField(
+          child: TextFormField(
+            showCursor: false,
+            readOnly: true,
             controller: _date,
             style: TextStyle(color: Colors.black),
             decoration: InputDecoration(
@@ -121,7 +132,7 @@ class title extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 10, 24, 10),
-      child: TextField(
+      child: TextFormField(
         controller: titleController,
         style: TextStyle(color: Colors.black),
         decoration: InputDecoration(
@@ -147,9 +158,13 @@ class description extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 10, 24, 10),
-      child: TextField(
+      child: TextFormField(
         keyboardType: TextInputType.multiline,
-        maxLines: 2,
+        validator: (value) {
+          if (value == null || value.isEmpty) return 'Field is required.';
+          return null;
+        },
+        maxLines: 3,
         controller: descriptionController,
         style: TextStyle(color: Colors.black, fontSize: 20),
         decoration: InputDecoration(
@@ -165,5 +180,3 @@ class description extends StatelessWidget {
     );
   }
 }
-
-
