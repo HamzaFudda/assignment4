@@ -14,8 +14,13 @@ class newTask extends StatefulWidget {
 class _newTaskState extends State<newTask> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: SingleChildScrollView(),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("New Task"),
+      ),
+      body: Container(
+        child: SingleChildScrollView(child: taskForm()),
+      ),
     );
   }
 }
@@ -42,12 +47,35 @@ class _taskFormState extends State<taskForm> {
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: _formKey,
       child: Column(children: <Widget>[
-        title(titleController: titleMainController),
-        description(descriptionController: descriptionMainController),
-        datePicker(selectedDate: selectedDate, onPressedUpdate: (recieved_date) {
-          selectedDate = recieved_date;
-        })
+        SizedBox(height: 50),
+        title(
+          titleController: titleMainController,
+          submit: _submitted,
+        ),
+        description(
+            descriptionController: descriptionMainController,
+            submit: _submitted),
+        datePicker(
+            selectedDate: selectedDate,
+            onPressedUpdate: (recieved_date) {
+              selectedDate = recieved_date;
+            },
+            submit: _submitted),
+        SizedBox(
+          height: 40,
+          child: ElevatedButton(
+            onPressed: _submit,
+            child: Text(
+              'Submit',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline6!
+                  .copyWith(color: Colors.white),
+            ),
+          ),
+        ),
       ]),
     );
   }
@@ -56,9 +84,13 @@ class _taskFormState extends State<taskForm> {
 class datePicker extends StatefulWidget {
   final Function(DateTime) onPressedUpdate;
   DateTime selectedDate;
+  bool submit;
 
   datePicker(
-      {Key? key, required this.selectedDate, required this.onPressedUpdate})
+      {Key? key,
+      required this.selectedDate,
+      required this.onPressedUpdate,
+      required this.submit})
       : super(key: key);
 
   @override
@@ -71,12 +103,11 @@ class _datePickerState extends State<datePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        //Text(DateFormat('dd-MMM-yyyy').format(widget.selectedDate)),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(24, 10, 24, 30),
-          child: TextFormField(
+    return //Text(DateFormat('dd-MMM-yyyy').format(widget.selectedDate)),
+        SizedBox(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 10, 24, 30),
+        child: TextFormField(
             showCursor: false,
             readOnly: true,
             controller: _date,
@@ -96,13 +127,21 @@ class _datePickerState extends State<datePicker> {
                 fillColor: Colors.grey.shade100,
                 filled: true,
                 hintText: "Due date",
+                hintStyle: TextStyle(
+                    color: !widget.submit ? Colors.black54 : Colors.red),
                 disabledBorder: InputBorder.none,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
                 )),
-          ),
-        ),
-      ],
+            autovalidateMode: widget.submit
+                ? AutovalidateMode.onUserInteraction
+                : AutovalidateMode.disabled,
+            validator: (text) {
+              if (text == null || text.isEmpty) {
+                return 'Field Required';
+              }
+            }),
+      ),
     );
   }
 
@@ -125,24 +164,37 @@ class _datePickerState extends State<datePicker> {
 
 class title extends StatelessWidget {
   TextEditingController titleController = TextEditingController();
+  bool submit;
 
-  title({Key? key, required this.titleController}) : super(key: key);
+  title({Key? key, required this.titleController, required this.submit})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 10, 24, 10),
-      child: TextFormField(
-        controller: titleController,
-        style: TextStyle(color: Colors.black),
-        decoration: InputDecoration(
-            fillColor: Colors.grey.shade100,
-            filled: true,
-            hintText: "Title",
-            disabledBorder: InputBorder.none,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-            )),
+    return SizedBox(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 10, 24, 10),
+        child: TextFormField(
+            controller: titleController,
+            style: TextStyle(color: Colors.black),
+            decoration: InputDecoration(
+                fillColor: Colors.grey.shade100,
+                filled: true,
+                hintText: "Title",
+                hintStyle:
+                    TextStyle(color: !submit ? Colors.black54 : Colors.red),
+                disabledBorder: InputBorder.none,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                )),
+            autovalidateMode: submit
+                ? AutovalidateMode.onUserInteraction
+                : AutovalidateMode.disabled,
+            validator: (text) {
+              if (text == null || text.isEmpty) {
+                return 'Field Required';
+              }
+            }),
       ),
     );
   }
@@ -150,32 +202,41 @@ class title extends StatelessWidget {
 
 class description extends StatelessWidget {
   TextEditingController descriptionController = TextEditingController();
+  bool submit;
 
-  description({Key? key, required this.descriptionController})
+  description(
+      {Key? key, required this.descriptionController, required this.submit})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 10, 24, 10),
-      child: TextFormField(
-        keyboardType: TextInputType.multiline,
-        validator: (value) {
-          if (value == null || value.isEmpty) return 'Field is required.';
-          return null;
-        },
-        maxLines: 3,
-        controller: descriptionController,
-        style: TextStyle(color: Colors.black, fontSize: 20),
-        decoration: InputDecoration(
-            contentPadding: const EdgeInsets.fromLTRB(12, 50, 12, 10),
-            fillColor: Colors.grey.shade100,
-            filled: true,
-            hintText: "Description",
-            disabledBorder: InputBorder.none,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-            )),
+    return SizedBox(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 10, 24, 10),
+        child: TextFormField(
+            keyboardType: TextInputType.multiline,
+            maxLines: 3,
+            controller: descriptionController,
+            style: TextStyle(color: Colors.black, fontSize: 20),
+            decoration: InputDecoration(
+                contentPadding: const EdgeInsets.fromLTRB(12, 50, 12, 10),
+                fillColor: Colors.grey.shade100,
+                filled: true,
+                hintText: "Description",
+                hintStyle:
+                    TextStyle(color: !submit ? Colors.black54 : Colors.red),
+                disabledBorder: InputBorder.none,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                )),
+            autovalidateMode: submit
+                ? AutovalidateMode.onUserInteraction
+                : AutovalidateMode.disabled,
+            validator: (text) {
+              if (text == null || text.isEmpty) {
+                return 'Field Required';
+              }
+            }),
       ),
     );
   }
