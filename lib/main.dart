@@ -2,6 +2,7 @@ import 'package:assignment4/date.dart';
 import 'package:assignment4/newTask.dart';
 import 'package:assignment4/todoList.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      //home: const newTask(),
       home: const MyHomePage(title: "title"),
     );
   }
@@ -48,18 +49,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          children: <Widget>[
-            Expanded(child: listof())
-          ],
+        appBar: AppBar(
+          title: Text(widget.title),
         ),
-      ),
-      // This trailing comma makes auto-formatting nicer for build methods.
-    );
+        body: tasks());
   }
 }
 
@@ -74,10 +67,7 @@ class notask extends StatelessWidget {
         children: <Widget>[
           Text(
             'You have no pending tasks',
-            style: Theme
-                .of(context)
-                .textTheme
-                .headline6,
+            style: Theme.of(context).textTheme.headline6,
           ),
           SizedBox(
             height: 10,
@@ -102,42 +92,58 @@ class _tasksState extends State<tasks> {
     return Container(
       child: Column(
         children: <Widget>[
-          // SizedBox(
-          //   height: 10,
-          // ),
+          SizedBox(
+            height: 10,
+          ),
+          Expanded(child: listOfTask()),
 
-          //ElevatedButton(onPressed: () {}, child: Text("Add Task")),
+          ElevatedButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => newTask()));
+              },
+              child: Text("Add Task")),
         ],
       ),
     );
   }
 }
-class listof extends StatefulWidget {
-  const listof({Key? key}) : super(key: key);
+
+class listOfTask extends StatefulWidget {
+  const listOfTask({Key? key}) : super(key: key);
 
   @override
-  _listofState createState() => _listofState();
+  _listOfTaskState createState() => _listOfTaskState();
 }
 
-class _listofState extends State<listof> {
+class _listOfTaskState extends State<listOfTask> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: 20,
-      itemBuilder: (context, position) {
-        return Card(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Text(
-              position.toString(),
-              style: TextStyle(fontSize: 22.0),
-            ),
-          ),
-        );
-      },
+      itemCount: context.read<todoList>().tasks.length,
+      itemBuilder: (context, index) => Card(
+        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+        child: ListTile(
+            //tileColor: Colors.cyan,
+            title: Row(children: [
+              Text("context.read<todoList>().tasks[index].title"),
+            ]),
+            // subtitle: Text(DateFormat('dd-MMM-yyyy')
+            //     .format(context.watch<todoList>().tasks[index].dateTime)),
+             trailing: Row(
+              children: [
+                IconButton(
+                    iconSize: 30,
+                    color: Colors.green,
+                    icon: Icon(Icons.add_circle_rounded),
+                    onPressed: () {
+                      setState(() {});
+                    }),
+              ],
+            )
+        ),
+      ),
     );
   }
 }
-
-
 

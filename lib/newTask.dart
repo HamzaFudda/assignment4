@@ -1,4 +1,6 @@
+import 'package:assignment4/main.dart';
 import 'package:assignment4/todo.dart';
+import 'package:assignment4/todoList.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
@@ -66,7 +68,20 @@ class _taskFormState extends State<taskForm> {
         SizedBox(
           height: 40,
           child: ElevatedButton(
-            onPressed: _submit,
+            onPressed: () {
+              setState(() => _submitted = true);
+              if (_formKey.currentState!.validate()) {
+                context.read<todoList>().addTasks(
+                    title_f: titleMainController.text,
+                    description_f: descriptionMainController.text,
+                    dateTime_f: selectedDate,
+                    done_f: false);
+                //print(titleMainController.text);
+                context.read<todoList>().printList();
+                // Navigator.of(context)
+                //     .push(MaterialPageRoute(builder: (context) => MyApp()));
+              }
+            },
             child: Text(
               'Submit',
               style: Theme.of(context)
