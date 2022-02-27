@@ -21,6 +21,8 @@ class _newTaskState extends State<newTask> {
         title: Text("New Task"),
       ),
       body: Container(
+        //SingleChildScrollView is used to avoid pixel overflow
+        //taskForm() widget is used to avoid rebuilding of the whole screen
         child: SingleChildScrollView(child: taskForm()),
       ),
     );
@@ -35,38 +37,42 @@ class taskForm extends StatefulWidget {
 }
 
 class _taskFormState extends State<taskForm> {
+  //global key is used for form which can use validator which can make fields red when they are empty
   final _formKey = GlobalKey<FormState>();
   bool _submitted = false;
   TextEditingController titleMainController = TextEditingController();
   TextEditingController descriptionMainController = TextEditingController();
-  DateTime selectedDate = DateTime.now();
 
-  void _submit() {
-    setState(() => _submitted = true);
-    if (_formKey.currentState!.validate()) {}
-  }
+  //initial date
+  DateTime selectedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
       child: Column(children: <Widget>[
-        SizedBox(height: 50),
+        SizedBox(height: 100),
+        //title widget
         title(
           titleController: titleMainController,
           submit: _submitted,
         ),
+        //description widget
         description(
             descriptionController: descriptionMainController,
             submit: _submitted),
+        //datePicker widget
         datePicker(
             selectedDate: selectedDate,
+            //selected is updated through callback
             onPressedUpdate: (recieved_date) {
               selectedDate = recieved_date;
             },
             submit: _submitted),
         SizedBox(
           height: 40,
+          //this widget will check whether all fields are filled or not
+          //if filled it will add the task to the list
           child: ElevatedButton(
             onPressed: () {
               setState(() => _submitted = true);
@@ -95,6 +101,7 @@ class _taskFormState extends State<taskForm> {
   }
 }
 
+//this widget will display a calendar to select the date for the task
 class datePicker extends StatefulWidget {
   final Function(DateTime) onPressedUpdate;
   DateTime selectedDate;
@@ -117,23 +124,26 @@ class _datePickerState extends State<datePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return //Text(DateFormat('dd-MMM-yyyy').format(widget.selectedDate)),
-        SizedBox(
+    return SizedBox(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(24, 10, 24, 30),
         child: TextFormField(
+            //this will block keyboard
             showCursor: false,
             readOnly: true,
             controller: _date,
-            style: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
             decoration: InputDecoration(
                 suffixIcon: IconButton(
                   icon: Icon(Icons.arrow_forward),
+                  //async and await to properly get the date
                   onPressed: () async {
                     await _selectDate(context);
                     (selected != null)
                         ? _date.text = DateFormat('dd-MMM-yyyy')
                             .format(widget.selectedDate)
+                        //clear controller if no date is selected
                         : _date.clear();
                     setState(() {});
                   },
@@ -143,7 +153,8 @@ class _datePickerState extends State<datePicker> {
                 hintText: "Due date",
                 hintStyle: TextStyle(
                     color: !widget.submit ? Colors.black : Colors.red,
-                    fontWeight: FontWeight.bold,fontSize: 20),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20),
                 disabledBorder: InputBorder.none,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
@@ -171,6 +182,7 @@ class _datePickerState extends State<datePicker> {
       setState(() {
         widget.selectedDate = selected!;
       });
+      //use of callback
       widget.onPressedUpdate(widget.selectedDate);
     }
     //print(selected);
@@ -191,13 +203,13 @@ class title extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(24, 10, 24, 10),
         child: TextFormField(
             controller: titleController,
-            style: TextStyle(color: Colors.black,fontSize: 20),
+            style: TextStyle(color: Colors.black, fontSize: 20),
             decoration: InputDecoration(
                 fillColor: Colors.grey.shade100,
                 filled: true,
                 hintText: "Title",
-                hintStyle:
-                    TextStyle(color: !submit ? Colors.black54 : Colors.red,fontSize: 20),
+                hintStyle: TextStyle(
+                    color: !submit ? Colors.black54 : Colors.red, fontSize: 20),
                 disabledBorder: InputBorder.none,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
@@ -238,8 +250,8 @@ class description extends StatelessWidget {
                 fillColor: Colors.grey.shade100,
                 filled: true,
                 hintText: "Description",
-                hintStyle:
-                    TextStyle(color: !submit ? Colors.black54 : Colors.red,fontSize: 20),
+                hintStyle: TextStyle(
+                    color: !submit ? Colors.black54 : Colors.red, fontSize: 20),
                 disabledBorder: InputBorder.none,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),

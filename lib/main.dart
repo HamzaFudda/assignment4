@@ -1,4 +1,3 @@
-import 'package:assignment4/date.dart';
 import 'package:assignment4/newTask.dart';
 import 'package:assignment4/taskTittle.dart';
 import 'package:assignment4/todoList.dart';
@@ -32,7 +31,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       //home: const newTask(),
-      home: const MyHomePage(title: "TODO list"),
+      home: const MyHomePage(title: "Tasks"),
     );
   }
 }
@@ -53,7 +52,9 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text(widget.title),
         ),
+        //this line checks if list is empty it displays a different widget else different widget
         body: (!context.watch<todoList>().tasks.isEmpty) ? tasks() : notask(),
+        //floating action button also appears when the list is not empty
         floatingActionButton: (!context.watch<todoList>().tasks.isEmpty)
             ? FloatingActionButton(
                 onPressed: () {
@@ -80,7 +81,7 @@ class notask extends StatelessWidget {
           children: <Widget>[
             Text(
               'You have no pending tasks',
-              style: Theme.of(context).textTheme.headline6,
+              style: TextStyle(fontSize: 24, color: Colors.grey),
             ),
             SizedBox(
               height: 10,
@@ -90,7 +91,7 @@ class notask extends StatelessWidget {
                   Navigator.of(context)
                       .push(MaterialPageRoute(builder: (context) => newTask()));
                 },
-                child: Text("Add Task")),
+                child: Text("Add a new task", style: TextStyle(fontSize: 18))),
           ],
         ),
       ),
@@ -112,9 +113,13 @@ class _tasksState extends State<tasks> {
       child: Column(
         children: <Widget>[
           SizedBox(
-            height: 10,
+            height: 30,
           ),
+          //use of expanded to avoid errors
           Expanded(child: listOfTask()),
+          SizedBox(
+            height: 80,
+          ),
         ],
       ),
     );
@@ -132,6 +137,7 @@ class _listOfTaskState extends State<listOfTask> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      //watch dynamically watches count and changes item count
       itemCount: context.watch<todoList>().tasks.length,
       itemBuilder: (BuildContext context, int index) {
         return Card(
@@ -139,7 +145,7 @@ class _listOfTaskState extends State<listOfTask> {
           child: ListTile(
             title: Text(
               context.watch<todoList>().tasks[index].title,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
             subtitle: Text("Due: " +
                 DateFormat('dd-MMM-yyyy')
@@ -148,11 +154,13 @@ class _listOfTaskState extends State<listOfTask> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 (context.watch<todoList>().tasks[index].done)
+                    //this way we can mark done task as undone and when it is again marked as done then the new date of completion will be updated
                     ? IconButton(
                         color: Colors.green,
                         icon: Icon(Icons.check_circle_rounded),
                         onPressed: () {
                           context.read<todoList>().tasks[index].done = false;
+                          context.read<todoList>().dueDateCheckList();
                           context.read<todoList>().sortingList();
                           setState(() {});
                         },
@@ -166,6 +174,7 @@ class _listOfTaskState extends State<listOfTask> {
                               .read<todoList>()
                               .tasks[index]
                               .completion_dateTime = DateTime.now();
+                          context.read<todoList>().dueDateCheckList();
                           context.read<todoList>().sortingList();
                           setState(() {});
                         },
@@ -190,10 +199,14 @@ class _listOfTaskState extends State<listOfTask> {
               ],
             ),
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) =>
-                      taskTitle(task: context.read<todoList>().tasks[index])));
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => taskTitle(
+                    task: context.read<todoList>().tasks[index],
 
+                  ),
+                ),
+              );
             },
           ),
         );
