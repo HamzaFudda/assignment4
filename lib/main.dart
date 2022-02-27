@@ -1,5 +1,6 @@
 import 'package:assignment4/date.dart';
 import 'package:assignment4/newTask.dart';
+import 'package:assignment4/taskTittle.dart';
 import 'package:assignment4/todoList.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       //home: const newTask(),
-      home: const MyHomePage(title: "title"),
+      home: const MyHomePage(title: "TODO list"),
     );
   }
 }
@@ -52,7 +53,18 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text(widget.title),
         ),
-        body: tasks());
+        body: (!context.watch<todoList>().tasks.isEmpty) ? tasks() : notask(),
+        floatingActionButton: (!context.watch<todoList>().tasks.isEmpty)
+            ? FloatingActionButton(
+                onPressed: () {
+                  setState(() {});
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) => newTask()));
+                },
+                tooltip: 'new task',
+                child: const Icon(Icons.add),
+              )
+            : null);
   }
 }
 
@@ -62,18 +74,25 @@ class notask extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            'You have no pending tasks',
-            style: Theme.of(context).textTheme.headline6,
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          ElevatedButton(onPressed: () {}, child: Text("Add Task")),
-        ],
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'You have no pending tasks',
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) => newTask()));
+                },
+                child: Text("Add Task")),
+          ],
+        ),
       ),
     );
   }
@@ -96,13 +115,6 @@ class _tasksState extends State<tasks> {
             height: 10,
           ),
           Expanded(child: listOfTask()),
-
-          ElevatedButton(
-              onPressed: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => newTask()));
-              },
-              child: Text("Add Task")),
         ],
       ),
     );
@@ -120,30 +132,72 @@ class _listOfTaskState extends State<listOfTask> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: context.read<todoList>().tasks.length,
-      itemBuilder: (context, index) => Card(
-        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-        child: ListTile(
-            //tileColor: Colors.cyan,
-            title: Row(children: [
-              Text("context.read<todoList>().tasks[index].title"),
-            ]),
-            // subtitle: Text(DateFormat('dd-MMM-yyyy')
-            //     .format(context.watch<todoList>().tasks[index].dateTime)),
-             trailing: Row(
+      itemCount: context.watch<todoList>().tasks.length,
+      itemBuilder: (BuildContext context, int index) {
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+          child: ListTile(
+            title: Text(
+              context.watch<todoList>().tasks[index].title,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text("Due: " +
+                DateFormat('dd-MMM-yyyy')
+                    .format(context.watch<todoList>().tasks[index].dateTime)),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                IconButton(
-                    iconSize: 30,
-                    color: Colors.green,
-                    icon: Icon(Icons.add_circle_rounded),
-                    onPressed: () {
-                      setState(() {});
-                    }),
+                (context.watch<todoList>().tasks[index].done)
+                    ? IconButton(
+                        color: Colors.green,
+                        icon: Icon(Icons.check_circle_rounded),
+                        onPressed: () {
+                          context.read<todoList>().tasks[index].done = false;
+                          context.read<todoList>().sortingList();
+                          setState(() {});
+                        },
+                      )
+                    : IconButton(
+                        icon: Icon(Icons.circle_outlined),
+                        color: Colors.black,
+                        onPressed: () {
+                          context.read<todoList>().tasks[index].done = true;
+                          context
+                              .read<todoList>()
+                              .tasks[index]
+                              .completion_dateTime = DateTime.now();
+                          context.read<todoList>().sortingList();
+                          setState(() {});
+                        },
+                      ),
+                (context.watch<todoList>().tasks[index].dueDatePass)
+                    ? SizedBox(
+                        width: 20,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.red,
+                          ),
+                        ))
+                    : SizedBox(
+                        width: 20,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.transparent,
+                          ),
+                        )),
               ],
-            )
-        ),
-      ),
+            ),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) =>
+                      taskTitle(task: context.read<todoList>().tasks[index])));
+
+            },
+          ),
+        );
+      },
     );
   }
 }
-

@@ -3,5 +3,13 @@ class todoTask {
   String description;
   DateTime dateTime;
   bool done;
-  todoTask({required this.title, required this.description,required this.dateTime,required this.done});
+  late DateTime completion_dateTime;
+  bool dueDatePass;
+
+  todoTask(
+      {required this.title,
+      required this.description,
+      required this.dateTime,
+      required this.done,
+      required this.dueDatePass});
 }

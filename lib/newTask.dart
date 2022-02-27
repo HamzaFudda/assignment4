@@ -77,9 +77,8 @@ class _taskFormState extends State<taskForm> {
                     dateTime_f: selectedDate,
                     done_f: false);
                 //print(titleMainController.text);
-                context.read<todoList>().printList();
-                // Navigator.of(context)
-                //     .push(MaterialPageRoute(builder: (context) => MyApp()));
+                //context.read<todoList>().printList();
+                Navigator.pop(context);
               }
             },
             child: Text(
@@ -126,7 +125,7 @@ class _datePickerState extends State<datePicker> {
             showCursor: false,
             readOnly: true,
             controller: _date,
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),
             decoration: InputDecoration(
                 suffixIcon: IconButton(
                   icon: Icon(Icons.arrow_forward),
@@ -143,7 +142,8 @@ class _datePickerState extends State<datePicker> {
                 filled: true,
                 hintText: "Due date",
                 hintStyle: TextStyle(
-                    color: !widget.submit ? Colors.black54 : Colors.red),
+                    color: !widget.submit ? Colors.black : Colors.red,
+                    fontWeight: FontWeight.bold,fontSize: 20),
                 disabledBorder: InputBorder.none,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
@@ -173,7 +173,7 @@ class _datePickerState extends State<datePicker> {
       });
       widget.onPressedUpdate(widget.selectedDate);
     }
-    print(selected);
+    //print(selected);
   }
 }
 
@@ -191,13 +191,13 @@ class title extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(24, 10, 24, 10),
         child: TextFormField(
             controller: titleController,
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: Colors.black,fontSize: 20),
             decoration: InputDecoration(
                 fillColor: Colors.grey.shade100,
                 filled: true,
                 hintText: "Title",
                 hintStyle:
-                    TextStyle(color: !submit ? Colors.black54 : Colors.red),
+                    TextStyle(color: !submit ? Colors.black54 : Colors.red,fontSize: 20),
                 disabledBorder: InputBorder.none,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
@@ -239,7 +239,7 @@ class description extends StatelessWidget {
                 filled: true,
                 hintText: "Description",
                 hintStyle:
-                    TextStyle(color: !submit ? Colors.black54 : Colors.red),
+                    TextStyle(color: !submit ? Colors.black54 : Colors.red,fontSize: 20),
                 disabledBorder: InputBorder.none,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
