@@ -6,17 +6,19 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(
-        create: (_) => todoList(),
-      ),
-      // ChangeNotifierProvider(
-      //   create: (_) => dateProvider(),
-      // ),
-    ],
-    child: const MyApp(),
-  ));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => todoList(),
+        ),
+        // ChangeNotifierProvider(
+        //   create: (_) => dateProvider(),
+        // ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -203,7 +205,6 @@ class _listOfTaskState extends State<listOfTask> {
                 MaterialPageRoute(
                   builder: (context) => taskTitle(
                     task: context.read<todoList>().tasks[index],
-
                   ),
                 ),
               );
